@@ -50,8 +50,16 @@ function JetProp2DAcoTTIDenQ_DEO2_FDTD(;
             i += 1
         end
     end
-    passive_modelset["sinθ"] = isempty(θ) ? zeros(Float32, size(values(active_modelset)[1])) : sin.(convert(Array{Float32}, θ));
-    passive_modelset["cosθ"] = isempty(θ) ? ones(Float32, size(values(active_modelset)[1])) : cos.(convert(Array{Float32}, θ));
+
+    # 2022.11.03 
+    #   - these angles are input in degrees
+    #   - θ is TTI symmetry tilt, input specified in degrees from vertical axis (+z)
+    # 
+    # Tilt (φ) 
+    #   if measured from +z in a right handed coordinate system must be transformed to 
+    #   +z in our left handed coordinate system: φ_lhs = - φ_rhs
+    passive_modelset["sinθ"] = isempty(θ) ? zeros(Float32, size(values(active_modelset)[1])) : sin.(convert(Array{Float32}, deg2rad.(-1 .* θ)));
+    passive_modelset["cosθ"] = isempty(θ) ? ones(Float32,  size(values(active_modelset)[1])) : cos.(convert(Array{Float32}, deg2rad.(-1 .* θ)));
     @assert length(active_modelset) > 0
 
     # active and passive wavefields (an active wavefield is serialized to disk)
@@ -218,6 +226,10 @@ operator, implying that it is in state and does not change with the action of th
 Parameters that are *not* passed to the constructor are assumed to be **active**, and will be part 
 of the model that the operator acts on, stored as a 3D array with the following indices: 
 `[Z coord][X coord][Active Parameter]`
+
+## TTI Symmetry Axes
+This angle is input in degrees, specified as described below
+  - θ (tilt) opening angle from vertical axis (+z) in right hand coordinate system (z upward)
 
 # Examples
 
