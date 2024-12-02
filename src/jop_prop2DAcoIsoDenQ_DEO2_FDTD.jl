@@ -841,7 +841,7 @@ end
 
 modelindex(F::Jop{T}, key) where {D,R,T<:Jet{D,R,typeof(JopProp2DAcoIsoDenQ_DEO2_FDTD_f!)}} = state(F).active_modelset[key]
 
-function srcillum!(γ, A::Jop{T}, m::AbstractArray{Float32}) where {D,R,T<:Jet{D,R,typeof(JopProp2DAcoIsoDenQ_DEO2_FDTD_f!)}}
+function srcillum!(γ, A::Jop{T}, m::AbstractArray{Float32}; time_mask = IllumOnesVector(Float32)) where {D,R,T<:Jet{D,R,typeof(JopProp2DAcoIsoDenQ_DEO2_FDTD_f!)}}
     s = state(A)
     isvalid, _chksum = isvalid_srcfieldfile(jet(A).mₒ, s.srcfieldhost[], s.srcfieldfile*"-pold", s.chksum[])
     if !isvalid
@@ -850,7 +850,7 @@ function srcillum!(γ, A::Jop{T}, m::AbstractArray{Float32}) where {D,R,T<:Jet{D
         s.srcfieldhost[] = gethostname()
     end
     open(s.compressor["pold"])
-    I = srcillum!(γ, s.srcfieldfile*"-pold", s.compressor["pold"], s.isinterior, s.ginsu, s.ntrec, s.nthreads)
+    I = srcillum!(γ, s.srcfieldfile*"-pold", s.compressor["pold"], time_mask, s.isinterior, s.ginsu, s.ntrec, s.nthreads)
     close(s.compressor["pold"])
     I
 end

@@ -194,8 +194,13 @@ end
     J = jacobian(F, m₀);
     s1 = srcillum(F, m₀);
     s2 = srcillum(J);
+
+    time_mask = ones(Float32, state(F, :ntrec))
+    time_mask[1:div(state(F,:ntrec),2)] .= 0
+    s3 = srcillum(J; time_mask)
     close(F)
     @test s1 ≈ s2
+    @test norm(s3) < norm(s2)
     @test maximum(s1) > 0
 end
 

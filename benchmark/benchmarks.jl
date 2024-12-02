@@ -262,4 +262,6 @@ for nthreads in _nthreads
     SUITE["3DAcoTTIDenQ_DEO2_FDTD, adjoint, compress"]["$nthreads threads"] = @benchmarkable mul!(δm,J',δd) setup=(F=f3dtti($nthreads,$(n_3D.z),$(n_3D.y),$(n_3D.x),$(nb_3D.z),$(nb_3D.y),$(nb_3D.x),true,true); m=1500*ones(domain(F)); d=F*m; J=jacobian!(F,m); δm=zeros(domain(J)); δm[div(n_3D.z,2),div(n_3D.y,2),div(n_3D.x,2)] = 100; δd=J*δm) teardown=(close(F))
 end
 
+SUITE["srcillum_helper"] = @benchmarkable JetPackWaveFD.srcillum_helper(x, 1.0f0) setup=(x = rand(Float32,700,600,600))
+
 SUITE
